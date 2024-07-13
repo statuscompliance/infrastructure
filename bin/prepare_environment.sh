@@ -12,9 +12,9 @@ docker_version=$(docker --version | awk '{print $3}' | sed 's/,//')
 required_version="21.0.0"
 
 if version_greater_equal "$docker_version" "$required_version"; then
-    echo "Docker version: $docker_version (sufficient)"
+    echo "Docker version $docker_version is compatible"
 else
-    echo "Docker version: $docker_version (insufficient). At least version $required_version is required."
+    echo Docker version $docker_version is incompatible. At least version $required_version is required.
     exit 1
 fi
 

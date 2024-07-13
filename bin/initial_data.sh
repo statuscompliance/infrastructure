@@ -14,9 +14,8 @@ curl -s -X POST http://localhost:3001/api/user/signUp \
 
 
 ## Sign in to get the access token
-curl -s -X POST http://localhost:3001/api/user/signIn \
+token=$(curl -s -X POST http://localhost:3001/api/user/signIn \
      -H "Content-Type: application/json" \
-     -d "{ \"username\": \"${username}\", \"password\": \"${password}\" }" | jq -r '.accessToken' > /tmp/token
+     -d "{ \"username\": \"${username}\", \"password\": \"${password}\" }" | jq -r '.accessToken')
 
-token=$(cat /tmp/token)
 echo "Token JWT: $token"

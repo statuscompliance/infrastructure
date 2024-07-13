@@ -1,3 +1,0 @@
-@echo off
-echo Building and starting the images...
-docker compose -f docker-compose.yml --env-file ../.env up -d --wait
