@@ -22,7 +22,7 @@ Before starting with the installation it is necessary to install or upgrade the 
 
 ### Installation Guide for Windows
 
-1. Open Git Bash or your preferred terminal on Windows.
+1. Open Windows PowerShell.
 
 2. Clone the GitHub repository with the following command:
 
@@ -45,7 +45,7 @@ Before starting with the installation it is necessary to install or upgrade the 
 5. Run the setup script:
 
    ```bash
-   .\setup_infrastructure.bat
+   .\setup.ps1
    ```
 
 ### Installation Guide for MacOS/Linux
@@ -64,17 +64,8 @@ Before starting with the installation it is necessary to install or upgrade the 
    cd infraestructure
    ```
 
-4. Navigate to a directory that matches your processor
-
- > [!NOTE]
- > The following command is an example for MacOS and Linux ARM processors. If you are using a different processor, navigate to the corresponding directory.
+4. Run the setup script:
 
    ```bash
-   cd MacOS-LinuxARM
-   ```
-
-5. Run the setup script:
-
-   ```bash
-   ./setup_infrastructure.sh
+   ./setup.sh
    ```
