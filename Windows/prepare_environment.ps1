@@ -108,7 +108,6 @@ $encrypted_password = $hashedPassword -replace '/', '\&'
 $encrypted_password = $encrypted_password -replace '&', '\&'
 
 # Replace example_user and example_pass strings with new user and password in settings.js
-Get-Content "..\settings.js" -replace '"example_user"', '"$username"' | Out-File -encoding UTF8 "..\settings.js"
-Get-Content "..\settings.js" -replace '"example_pass"', '"$encrypted_password"' | Out-File -encoding UTF8 "..\settings.js"
+(Get-Content "..\settings.js") -replace '"example_user"', '"$username"' -replace '"example_pass"', '"$encrypted_password"' | Set-Content "..\settings.js"
 
 Write-Host "Node-RED user created successfully."
