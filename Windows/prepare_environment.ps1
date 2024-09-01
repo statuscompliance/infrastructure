@@ -54,7 +54,7 @@ else {
 }
 
 # Clean up previous installations
-$directories = "status-backend", "status-frontend", "node-red-status", "mysql", "collector-events"
+$directories = "status-backend", "status-frontend", "node-red-status", "mysql", "collector-events", "reporter"
 
 foreach ($dir in $directories) {
     if (Test-Path "..\$dir") {

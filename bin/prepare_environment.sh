@@ -21,7 +21,7 @@ fi
 echo ""
 
 ## Clean up previous installations
-directories=("status-backend" "status-frontend" "node-red-status" "collector-events" ".env")
+directories=("status-backend" "status-frontend" "node-red-status" "collector-events" "reporter" ".env")
 
 for dir in "${directories[@]}"; do
     if [ -d "$dir" ]; then
