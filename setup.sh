@@ -1,16 +1,24 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-git clone -b feat/9-Manage_AI_requests https://github.com/statuscompliance/status-backend.git
+cat << "EOF"
+                            WELCOME TO 
+  ______   _________     _     _________  _____  _____   ______   
+.' ____ \ |  _   _  |   / \   |  _   _  ||_   _||_   _|.' ____ \  
+| (___ \_||_/ | | \_|  / _ \  |_/ | | \_|  | |    | |  | (___ \_| 
+ _.____`.     | |     / ___ \     | |      | '    ' |   _.____`.  
+| \____) |   _| |_  _/ /   \ \_  _| |_      \ \__/ /   | \____) | 
+ \______.'  |_____||____| |____||_____|      `.__.'     \______.' 
+                                                                                                    
+EOF
 
-git clone -b feature/24-Bluejay_integration https://github.com/statuscompliance/status-frontend.git
+## Step 1: Prepare the environment
+source bin/prepare_environment.sh
 
-cp .env.deploy ./status-backend/.env
+## Step 2: Build and start the containers
+source start.sh
 
-cp .env.deploy .env
+## Step 3: Insert initial data
+source bin/initial_data.sh
 
-## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
-mkdir -p node-red-status
-
-docker compose -p status up -d 
-
-echo "Setup completado. Accede a http://localhost:3000 para ver la aplicación o a http://localhost:3001/docs para acceder a la documentación de la API."
+echo "Infrastructure up and running successfully."
+echo "You can access the application at http://localhost:3000"

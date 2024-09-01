@@ -76,9 +76,14 @@ module.exports = {
     type: "credentials",
     users: [
       {
-        username: "alvber",
+        username: "example_user",
+        password: "example_pass",
+        permissions: "*",
+      },
+      {
+        username: "admin",
         password:
-          "$2b$10$DgrjJMeuGA.HcQBnBqVj6e4t2OckWV66ritpJUCwh6rr/0enyExAO",
+          "$2a$12$TmRzHXqhmei9li1maIDKKeMt20p4lKqxqNAfKNhXEy99XkA5yjGl2",
         permissions: "*",
       },
     ],
@@ -125,8 +130,8 @@ module.exports = {
    * See http://nodered.org/docs/security.html#generating-the-password-hash
    */
   httpNodeAuth: {
-    user: "alvber",
-    pass: "$2b$10$DgrjJMeuGA.HcQBnBqVj6e4t2OckWV66ritpJUCwh6rr/0enyExAO",
+    user: "example_user",
+    pass: "example_pass",
   },
   //httpStaticAuth: {user:"user",pass:"$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN."},
 

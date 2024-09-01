@@ -47,6 +47,7 @@ services:
       - web_network
   # ================================================
   bluejay-render:
+    platform: linux/amd64
     container_name: bluejay-render
     image: governify/render:develop
     environment:
@@ -69,6 +70,7 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-assets-manager:
+    platform: linux/amd64
     container_name: bluejay-assets-manager
     image: "governify/assets-manager:develop"
     environment:
@@ -88,6 +90,7 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-reporter:
+    platform: linux/amd64
     container_name: bluejay-reporter
     build:
       context: ./reporter
@@ -108,6 +111,7 @@ services:
       - bluejay-influx-reporter
   # ================================================
   bluejay-registry:
+    platform: linux/amd64
     container_name: bluejay-registry
     image: "governify/registry:v3.7.0"
     environment:
@@ -126,6 +130,7 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-collector-events:
+    platform: linux/amd64
     container_name: bluejay-collector-events
     build:
       context: ./collector-events
@@ -150,6 +155,7 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-dashboard:
+    platform: linux/amd64
     container_name: bluejay-dashboard
     image: governify/dashboard:develop
     environment:
@@ -167,6 +173,7 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-director:
+    platform: linux/amd64
     container_name: bluejay-director
     image: "governify/director:develop"
     environment:
@@ -183,6 +190,7 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-scope-manager:
+    platform: linux/amd64
     container_name: bluejay-scope-manager
     image: "governify/scope-manager:develop"
     environment:
@@ -203,6 +211,7 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-join:
+    platform: linux/amd64
     container_name: bluejay-join
     image: "governify/join-bluejay:develop"
     environment:
@@ -216,6 +225,7 @@ services:
     restart: "unless-stopped"
   ############### DATABASES ###############
   bluejay-influx-reporter:
+    platform: linux/amd64
     image: "influxdb:1.8.4-alpine"
     container_name: bluejay-influx-reporter
     environment:
@@ -236,10 +246,12 @@ services:
       - "bluejay-mongo-registry-volume:/data/db"
     ports:
       - "5001:27017"
+    #mem_limit: 2000m
     mem_limit: 3000m
     restart: "unless-stopped"
   # ================================================
   bluejay-redis-ec:
+    platform: linux/amd64
     container_name: bluejay-redis-ec
     image: redis
     volumes:
@@ -264,7 +276,6 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
     healthcheck:
       test: mysqladmin ping -h localhost
-      start_period: 10s
       retries: 10
     ports:
       - "3306:3306"
