@@ -38,6 +38,7 @@ echo "_______________________CLONING REPOSITORIES_______________________"
 
 git clone -b develop https://github.com/statuscompliance/status-backend status-backend
 git clone -b develop https://github.com/statuscompliance/status-frontend status-frontend
+git clone https://github.com/statuscompliance/reporter reporter
 git clone https://github.com/statuscompliance/collector-events collector-events
 
 cp .env.deploy status-backend/.env

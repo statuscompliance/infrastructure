@@ -91,7 +91,9 @@ services:
   bluejay-reporter:
     platform: linux/amd64
     container_name: bluejay-reporter
-    image: governify/reporter:develop
+    build:
+      context: ./reporter
+      dockerfile: Dockerfile
     environment:
       - NODE_ENV=production
       - PORT=80

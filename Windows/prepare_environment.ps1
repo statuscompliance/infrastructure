@@ -68,6 +68,7 @@ Write-Host "_______________________CLONING REPOSITORIES_______________________"
 
 git clone -b feat/9-Manage_AI_requests https://github.com/statuscompliance/status-backend ..\status-backend
 git clone -b feature/22-Create_initial_chatbot https://github.com/statuscompliance/status-frontend ..\status-frontend
+git clone https://github.com/statuscompliance/reporter ..\reporter
 git clone https://github.com/statuscompliance/collector-events ..\collector-events
 
 Copy-Item ..\.env.deploy ..\status-backend\.env

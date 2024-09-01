@@ -21,5 +21,5 @@ $ErrorActionPreference = "Stop"
 . .\initial_data.ps1
 
 Write-Host "Infrastructure up and running successfully."
-Write-Host "You can access the application at http://localhost:3000/login"
+Write-Host "You can access the application at http://localhost:3000"
 

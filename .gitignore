@@ -5,6 +5,7 @@ node-red-status
 status-backend
 status-frontend
 collector-events
+reporter
 
 # Node modules
 node_modules
@@ -14,3 +15,6 @@ settings.js
 
 # Local env
 .env
+
+# Mac files
+.DS_Store

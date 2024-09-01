@@ -21,4 +21,4 @@ source start.sh
 source bin/initial_data.sh
 
 echo "Infrastructure up and running successfully."
-echo "You can access the application at http://localhost:3000/login"
+echo "You can access the application at http://localhost:3000"
