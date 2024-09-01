@@ -8,4 +8,4 @@ compose_file=$(getDockerCompose)
 echo "Starting the containers on $compose_file..."
 echo ""
 
-docker compose -f $compose_file up --wait 
+docker compose -f $compose_file up --wait
