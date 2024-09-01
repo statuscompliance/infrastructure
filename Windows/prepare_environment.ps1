@@ -66,8 +66,8 @@ foreach ($dir in $directories) {
 # Clone repositories
 Write-Host "_______________________CLONING REPOSITORIES_______________________"
 
-git clone -b feat/9-Manage_AI_requests https://github.com/statuscompliance/status-backend ..\status-backend
-git clone -b feature/22-Create_initial_chatbot https://github.com/statuscompliance/status-frontend ..\status-frontend
+git clone -b develop https://github.com/statuscompliance/status-backend ..\status-backend
+git clone -b develop https://github.com/statuscompliance/status-frontend ..\status-frontend
 git clone https://github.com/statuscompliance/reporter ..\reporter
 git clone https://github.com/statuscompliance/collector-events ..\collector-events
 
@@ -108,7 +108,6 @@ $encrypted_password = $hashedPassword -replace '/', '\&'
 $encrypted_password = $encrypted_password -replace '&', '\&'
 
 # Replace example_user and example_pass strings with new user and password in settings.js
-Get-Content "..\settings.js" -replace '"example_user"', '"$username"' | Out-File -encoding UTF8 "..\settings.js"
-Get-Content "..\settings.js" -replace '"example_pass"', '"$encrypted_password"' | Out-File -encoding UTF8 "..\settings.js"
+(Get-Content "..\settings.js") -replace '"example_user"', '"$username"' -replace '"example_pass"', '"$encrypted_password"' | Set-Content "..\settings.js"
 
 Write-Host "Node-RED user created successfully."

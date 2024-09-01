@@ -6,17 +6,18 @@ services:
     build:
       context: ./status-backend
       dockerfile: Dockerfile
-    command: sh -c "rm -rf node_modules && npm install && npm run dev"
     ports:
       - "3001:3001"
     networks:
       - web_network
       - mysql_network
     healthcheck:
-      test: wget --quiet --tries=1 --spider http://127.0.0.1:3001/api/user || exit 1
+      test: curl -f -s http://127.0.0.1:3001/api/user
       retries: 10
     depends_on:
       mysql:
+        condition: service_healthy
+      nodered:
         condition: service_healthy
   # ================================================
   status-frontend:
@@ -239,7 +240,6 @@ services:
     restart: "unless-stopped"
   # ================================================
   bluejay-mongo-registry:
-    # platform: linux/amd64
     container_name: bluejay-mongo-registry
     image: mongo
     volumes:

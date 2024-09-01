@@ -11,10 +11,10 @@ Invoke-WebRequest -Uri "http://localhost:3001/api/user" -Method GET -UseBasicPar
 
 # Define JSON payload for creating a new user
 $jsonBodySignUp = @{
-    username = $username
-    password = $password
+    username = "$username"
+    password = "$password"
     authority = "ADMIN"
-    email = $email
+    email = "$email"
 } | ConvertTo-Json
 
 # Make POST request to create a new user
@@ -22,8 +22,8 @@ Invoke-WebRequest -Uri "http://localhost:3001/api/user/signUp" -Method POST -Con
 
 # Sign in to get the access token
 $jsonBodySignIn = @{
-    username = $username
-    password = $password
+    username = "$username"
+    password = "$password"
 } | ConvertTo-Json
 $response = Invoke-WebRequest -Uri "http://localhost:3001/api/user/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing
 $accessToken = ($response.Content | ConvertFrom-Json).accessToken
