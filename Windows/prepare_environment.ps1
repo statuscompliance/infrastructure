@@ -71,8 +71,7 @@ git clone -b develop https://github.com/statuscompliance/status-frontend ..\stat
 git clone https://github.com/statuscompliance/reporter ..\reporter
 git clone https://github.com/statuscompliance/collector-events ..\collector-events
 
-Copy-Item ..\.env.deploy ..\status-backend\.env
-Copy-Item ..\.env.deploy ..\.env
+
 
 # Create node-red-status directory if not exist
 if (-not (Test-Path "..\node-red-status")) {
@@ -109,5 +108,9 @@ $encrypted_password = $encrypted_password -replace '&', '\&'
 
 # Replace example_user and example_pass strings with new user and password in settings.js
 (Get-Content "..\settings.js") -replace '"example_user"', '"$username"' -replace '"example_pass"', '"$encrypted_password"' | Set-Content "..\settings.js"
+(Get-Content ".env.deploy") -replace 'example_user', $username -replace 'example_pass', $password | Set-Content ".env"
+
+Copy-Item ..\.env.deploy ..\status-backend\.env
+Copy-Item ..\.env.deploy ..\collector-events\.env
 
 Write-Host "Node-RED user created successfully."

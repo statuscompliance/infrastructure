@@ -41,8 +41,6 @@ git clone -b develop https://github.com/statuscompliance/status-frontend status-
 git clone https://github.com/statuscompliance/reporter reporter
 git clone https://github.com/statuscompliance/collector-events collector-events
 
-cp .env.deploy status-backend/.env
-cp .env.deploy .env
 
 ## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
 mkdir -p node-red-status
@@ -78,9 +76,16 @@ function setVariables() {
     echo "$output" > settings.js
     output=$(sed -e "s/\"example_pass\"/\"$encrypted_password\"/g" settings.js)
     echo "$output" > settings.js
+    output=$(sed -e "s/example_user/$username/g" .env.deploy)
+    echo "$output" > .env
+    output=$(sed -e "s/example_pass/$password/g" .env)
+    echo "$output" > .env
 }
 
 setVariables
+
+cp .env.deploy status-backend/.env
+cp .env.deploy collector-events/.env
 
 echo "Node-RED user created successfully."
 echo ""
