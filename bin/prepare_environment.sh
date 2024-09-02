@@ -84,8 +84,8 @@ function setVariables() {
 
 setVariables
 
-cp .env.deploy status-backend/.env
-cp .env.deploy collector-events/.env
+cp .env status-backend/.env
+cp .env collector-events/.env
 
 echo "Node-RED user created successfully."
 echo ""

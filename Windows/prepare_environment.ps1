@@ -110,7 +110,7 @@ $encrypted_password = $encrypted_password -replace '&', '\&'
 (Get-Content "..\settings.js") -replace '"example_user"', '"$username"' -replace '"example_pass"', '"$encrypted_password"' | Set-Content "..\settings.js"
 (Get-Content ".env.deploy") -replace 'example_user', $username -replace 'example_pass', $password | Set-Content ".env"
 
-Copy-Item ..\.env.deploy ..\status-backend\.env
-Copy-Item ..\.env.deploy ..\collector-events\.env
+Copy-Item ..\.env ..\status-backend\.env
+Copy-Item ..\.env ..\collector-events\.env
 
 Write-Host "Node-RED user created successfully."
