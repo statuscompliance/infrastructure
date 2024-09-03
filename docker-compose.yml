@@ -49,6 +49,8 @@ services:
   bluejay-render:
     container_name: bluejay-render
     image: governify/render:develop
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=80
@@ -71,6 +73,8 @@ services:
   bluejay-assets-manager:
     container_name: bluejay-assets-manager
     image: "governify/assets-manager:develop"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=80
@@ -89,6 +93,8 @@ services:
   # ================================================
   bluejay-reporter:
     container_name: bluejay-reporter
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     build:
       context: ./reporter
       dockerfile: Dockerfile
@@ -110,6 +116,8 @@ services:
   bluejay-registry:
     container_name: bluejay-registry
     image: "governify/registry:v3.7.0"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=80
@@ -127,9 +135,13 @@ services:
   # ================================================
   bluejay-collector-events:
     container_name: bluejay-collector-events
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     build:
       context: ./collector-events
       dockerfile: Dockerfile
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
       - PORT=80
@@ -152,6 +164,8 @@ services:
   bluejay-dashboard:
     container_name: bluejay-dashboard
     image: governify/dashboard:develop
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - INFLUX_URL=http://host.docker.internal:5002
@@ -169,6 +183,8 @@ services:
   bluejay-director:
     container_name: bluejay-director
     image: "governify/director:develop"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - INFLUXDB_BIND_ADDRESS=:8088
       - NODE_ENV=production
@@ -185,6 +201,8 @@ services:
   bluejay-scope-manager:
     container_name: bluejay-scope-manager
     image: "governify/scope-manager:develop"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - PRIVATE_KEY=${PRIVATE_KEY}
       - NODE_ENV=production
@@ -205,6 +223,8 @@ services:
   bluejay-join:
     container_name: bluejay-join
     image: "governify/join-bluejay:develop"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - PRIVATE_KEY=${PRIVATE_KEY}
       - KEY_GITHUB=${KEY_GITHUB}
@@ -218,6 +238,8 @@ services:
   bluejay-influx-reporter:
     image: "influxdb:1.8.4-alpine"
     container_name: bluejay-influx-reporter
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - INFLUXDB_BIND_ADDRESS=:8088
     volumes:
@@ -232,6 +254,8 @@ services:
   bluejay-mongo-registry:
     container_name: bluejay-mongo-registry
     image: mongo
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - "bluejay-mongo-registry-volume:/data/db"
     ports:
@@ -242,6 +266,8 @@ services:
   bluejay-redis-ec:
     container_name: bluejay-redis-ec
     image: redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - "bluejay-redis-ec-volume:/data"
     ports:
