@@ -14,8 +14,11 @@ curl -s -X POST http://localhost:3001/api/user/signUp \
 
 
 ## Sign in to get the access token
-token=$(curl -s -X POST http://localhost:3001/api/user/signIn \
+token_payload=$(curl -s -X POST http://localhost:3001/api/user/signIn \
      -H "Content-Type: application/json" \
-     -d "{ \"username\": \"${username}\", \"password\": \"${password}\" }" | jq -r '.accessToken')
+     -d "{ \"username\": \"${username}\", \"password\": \"${password}\" }")
+docker pull linuxserver/yq > /dev/null 2>&1
+token=$(docker run --rm --entrypoint jq --env JSON_DATA="$token_payload" linuxserver/yq -r -n "env.JSON_DATA | fromjson.accessToken")
+docker rmi linuxserver/yq > /dev/null 2>&1
 
 echo "Token JWT: $token"
