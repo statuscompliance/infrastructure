@@ -108,7 +108,7 @@ $encrypted_password = $encrypted_password -replace '&', '\&'
 
 # Replace example_user and example_pass strings with new user and password in settings.js
 (Get-Content "..\settings.js") -replace '"example_user"', '"$username"' -replace '"example_pass"', '"$encrypted_password"' | Set-Content "..\settings.js"
-(Get-Content ".env.deploy") -replace 'example_user', $username -replace 'example_pass', $password | Set-Content ".env"
+(Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
 
 Copy-Item ..\.env ..\status-backend\.env
 Copy-Item ..\.env ..\collector-events\.env
