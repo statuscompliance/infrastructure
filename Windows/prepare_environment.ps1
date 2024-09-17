@@ -102,12 +102,8 @@ docker pull $bcryptImage > $null 2>&1
 $hashedPassword = & docker run --rm $bcryptImage hash "$passwordPlainText" 10
 docker rmi $bcryptImage > $null 2>&1
 
-# Replace special characters in hashed password
-$encrypted_password = $hashedPassword -replace '/', '\&'
-$encrypted_password = $encrypted_password -replace '&', '\&'
-
 # Replace example_user and example_pass strings with new user and password in settings.js
-(Get-Content "..\settings.js") -replace '"example_user"', '"$username"' -replace '"example_pass"', '"$encrypted_password"' | Set-Content "..\settings.js"
+(Get-Content "..\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\settings.js"
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
 
 Copy-Item ..\.env ..\status-backend\.env
