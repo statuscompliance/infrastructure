@@ -75,6 +75,8 @@ services:
     platform: linux/amd64
     container_name: bluejay-assets-manager
     image: "governify/assets-manager:develop"
+    # Needed so the volume can be written by the container after creation
+    user: root
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -304,6 +306,7 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
     healthcheck:
       test: mysqladmin ping -h localhost
+      start_period: 10s
       retries: 10
     ports:
       - "3306:3306"
