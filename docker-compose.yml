@@ -40,8 +40,8 @@ services:
     ports:
       - "1880:1880"
     volumes:
-      - ./settings.js:/data/settings.js
       - ./node-red-status:/data
+      - ./settings.js:/data/settings.js
     command: node-red
     networks:
       - web_network
@@ -73,6 +73,8 @@ services:
   bluejay-assets-manager:
     container_name: bluejay-assets-manager
     image: "governify/assets-manager:develop"
+    # Needed so the volume can be written by the container after creation
+    user: root
     extra_hosts:
       - "host.docker.internal:host-gateway"
     environment:
@@ -93,11 +95,11 @@ services:
   # ================================================
   bluejay-reporter:
     container_name: bluejay-reporter
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     build:
       context: ./reporter
       dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       - NODE_ENV=production
       - PORT=80
@@ -135,11 +137,11 @@ services:
   # ================================================
   bluejay-collector-events:
     container_name: bluejay-collector-events
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     build:
       context: ./collector-events
       dockerfile: Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
       - .env
     environment:
@@ -160,6 +162,8 @@ services:
       - bluejay-redis-ec
     mem_limit: 700m
     restart: "unless-stopped"
+    networks:
+      - web_network
   # ================================================
   bluejay-dashboard:
     container_name: bluejay-dashboard
