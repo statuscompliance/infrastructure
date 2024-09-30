@@ -4,8 +4,7 @@ node-red
 node-red-status
 status-backend
 status-frontend
-collector-events
-reporter
+grafana
 
 # Node modules
 node_modules

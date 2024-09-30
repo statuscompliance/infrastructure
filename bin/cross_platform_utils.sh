@@ -28,7 +28,7 @@ function setupCrossPlatformEnvironment() {
 
 function getDockerCompose() {
   if needs_emulation; then
-    echo "docker-compose-emulated.yml"
+    echo "docker-compose.yml"
   else
     echo "docker-compose.yml"
   fi

@@ -1,0 +1,30 @@
+# config file version
+apiVersion: 1
+
+datasources:
+  - name: STATUS datasource
+    type: mysql
+    access: proxy
+    orgId: 1
+    # <string> custom UID which can be used to reference this datasource in other parts of the configuration, if not specified will be generated automatically
+    # uid: my_unique_uid
+    url: mysql:3306
+    # <string> database user, if used
+    user: root
+    # <string> database name, if used
+    database: statusdb
+    # <bool> enable/disable basic auth
+    basicAuth: false
+    # <string> basic auth username
+    basicAuthUser: root
+    # <bool> enable/disable with credentials headers
+    withCredentials:
+    jsonData:
+      maxOpenConns: 100
+      maxIdleConns: 100
+      connMaxLifetime: 14400
+    secureJsonData:
+      password: ""
+    isDefault: true
+    version: 1
+    editable: false

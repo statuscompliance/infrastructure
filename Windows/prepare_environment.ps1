@@ -54,7 +54,7 @@ else {
 }
 
 # Clean up previous installations
-$directories = "status-backend", "status-frontend", "node-red-status", "mysql", "collector-events", "reporter"
+$directories = "status-backend", "status-frontend", "node-red-status", "mysql", "grafana"
 
 foreach ($dir in $directories) {
     if (Test-Path "..\$dir") {
@@ -66,10 +66,8 @@ foreach ($dir in $directories) {
 # Clone repositories
 Write-Host "_______________________CLONING REPOSITORIES_______________________"
 
-git clone -b develop https://github.com/statuscompliance/status-backend ..\status-backend
+git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend ..\status-backend
 git clone -b develop https://github.com/statuscompliance/status-frontend ..\status-frontend
-git clone https://github.com/statuscompliance/reporter ..\reporter
-git clone https://github.com/statuscompliance/collector-events ..\collector-events
 
 
 
@@ -107,6 +105,5 @@ docker rmi $bcryptImage > $null 2>&1
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
 
 Copy-Item ..\.env ..\status-backend\.env
-Copy-Item ..\.env ..\collector-events\.env
 
 Write-Host "Node-RED user created successfully."

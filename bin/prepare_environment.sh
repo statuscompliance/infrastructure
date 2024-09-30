@@ -21,7 +21,7 @@ fi
 echo ""
 
 ## Clean up previous installations
-directories=("status-backend" "status-frontend" "node-red-status" "collector-events" "reporter" ".env")
+directories=("status-backend" "status-frontend" "node-red-status" "grafana" ".env")
 
 for dir in "${directories[@]}"; do
     if [ -d "$dir" ]; then
@@ -36,10 +36,8 @@ echo ""
 
 echo "_______________________CLONING REPOSITORIES_______________________"
 
-git clone -b develop https://github.com/statuscompliance/status-backend status-backend
+git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend status-backend
 git clone -b develop https://github.com/statuscompliance/status-frontend status-frontend
-git clone https://github.com/statuscompliance/reporter reporter
-git clone https://github.com/statuscompliance/collector-events collector-events
 
 
 ## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
@@ -85,7 +83,6 @@ function setVariables() {
 setVariables
 
 cp .env status-backend/.env
-cp .env collector-events/.env
 
 echo "Node-RED user created successfully."
 echo ""
