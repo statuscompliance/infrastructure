@@ -30,7 +30,7 @@ $accessToken = ($response.Content | ConvertFrom-Json).accessToken
 Write-Host "Token JWT: $accessToken"
 
 $baseUrl = "http://localhost:3001/api/grafana"
-$envFile = "../.env"
+$envFile = "../status-backend/.env"
 
 $serviceAccountPayload = @{
     name = "Status system"

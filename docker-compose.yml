@@ -70,6 +70,7 @@ services:
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
+    user: root
     ports:
       - "3100:3000"
     networks:
