@@ -79,8 +79,8 @@ services:
       - GF_SECURITY_ADMIN_USER=${USER_STATUS}
       - GF_SECURITY_ADMIN_PASSWORD=${PASS_STATUS}
     volumes:
-      - "$PWD/grafana/data:/var/lib/grafana"
-      - "$PWD/config:/etc/grafana/provisioning/datasources"
+      - "./grafana/data:/var/lib/grafana"
+      - "./config:/etc/grafana/provisioning/datasources"
     restart: unless-stopped
   # ================================================
 networks:
