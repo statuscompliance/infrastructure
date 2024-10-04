@@ -8,9 +8,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
-    networks:
-      - web_network
-      - mysql_network
     healthcheck:
       test: curl -f -s http://127.0.0.1:3001/api/user
       retries: 10
@@ -19,6 +16,10 @@ services:
         condition: service_healthy
       nodered:
         condition: service_healthy
+    networks:
+      - web_network
+      - mysql_network
+      - nodered_network
   # ================================================
   status-frontend:
     restart: always
@@ -45,6 +46,7 @@ services:
     command: node-red
     networks:
       - web_network
+      - nodered_network
   # ================================================
   mysql:
     restart: always
@@ -66,6 +68,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql:/var/lib/mysql
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
   # ================================================
   grafana:
     image: grafana/grafana-oss:latest
@@ -79,8 +82,11 @@ services:
       - GF_SECURITY_ADMIN_USER=${USER_STATUS}
       - GF_SECURITY_ADMIN_PASSWORD=${PASS_STATUS}
     volumes:
-      - "./grafana/data:/var/lib/grafana"
-      - "./config:/etc/grafana/provisioning/datasources"
+      - ./grafana/data:/var/lib/grafana
+      - ./config:/etc/grafana/provisioning/datasources
+    depends_on:
+      mysql:
+        condition: service_healthy
     restart: unless-stopped
   # ================================================
 networks:
@@ -88,12 +94,10 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
+  nodered_network:
+    driver: bridge
 
 volumes:
-  bluejay-influx-reporter-volume: null
-  bluejay-mongo-registry-volume: null
-  bluejay-dashboard-volume: null
-  bluejay-redis-ec-volume: null
   nodered:
     name: node-red-status
   mysql:
