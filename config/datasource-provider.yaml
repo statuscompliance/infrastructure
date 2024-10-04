@@ -10,13 +10,13 @@ datasources:
     # uid: my_unique_uid
     url: mysql:3306
     # <string> database user, if used
-    user: root
+    user: grafanauser
     # <string> database name, if used
     database: statusdb
     # <bool> enable/disable basic auth
     basicAuth: false
     # <string> basic auth username
-    basicAuthUser: root
+    basicAuthUser: grafanauser
     # <bool> enable/disable with credentials headers
     withCredentials:
     jsonData:
@@ -24,7 +24,7 @@ datasources:
       maxIdleConns: 100
       connMaxLifetime: 14400
     secureJsonData:
-      password: ""
+      password: grafanapass
     isDefault: true
     version: 1
     editable: false

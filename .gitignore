@@ -13,7 +13,8 @@ node_modules
 settings.js
 
 # Local env
-.env
+.env*
+!.env.deploy
 
 # Mac files
 .DS_Store
