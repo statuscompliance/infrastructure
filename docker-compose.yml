@@ -1,11 +1,12 @@
 services:
   ############### MICROSERVICES ###############
   status-backend:
-    restart: always
+    restart: unless-stopped
     container_name: status-backend
-    build:
-      context: ./status-backend
-      dockerfile: Dockerfile
+    image: statuscompliance/status-backend:develop
+    # build:
+    #   context: ./status-backend
+    #   dockerfile: Dockerfile
     ports:
       - "3001:3001"
     healthcheck:
@@ -20,20 +21,20 @@ services:
       - web_network
       - mysql_network
       - nodered_network
+    volumes:
+      - ./.env:/status-backend/.env
   # ================================================
   status-frontend:
-    restart: always
+    restart: unless-stopped
     container_name: status-frontend
-    build:
-      context: ./status-frontend
-      dockerfile: Dockerfile
+    image: statuscompliance/status-frontend:PR.51
     ports:
       - "3000:80"
     networks:
       - web_network
   # ================================================
   nodered:
-    restart: always
+    restart: unless-stopped
     container_name: node-red-status
     build:
       context: .
@@ -49,7 +50,7 @@ services:
       - nodered_network
   # ================================================
   mysql:
-    restart: always
+    restart: unless-stopped
     image: mysql:8.3.0
     container_name: mysql
     networks:
@@ -71,6 +72,7 @@ services:
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
   # ================================================
   grafana:
+    restart: unless-stopped
     image: grafana/grafana-oss:latest
     container_name: grafana
     user: root
@@ -87,7 +89,6 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
-    restart: unless-stopped
   # ================================================
 networks:
   mysql_network:

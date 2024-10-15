@@ -34,14 +34,16 @@ echo ""
 
 ## Clone repositories
 
-echo "_______________________CLONING REPOSITORIES_______________________"
+# echo "_______________________CLONING REPOSITORIES_______________________"
 
-git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend status-backend
-git clone -b develop https://github.com/statuscompliance/status-frontend status-frontend
+# git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend status-backend
+# git clone -b develop https://github.com/statuscompliance/status-frontend status-frontend
 
 
 ## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
 mkdir -p node-red-status
+mkdir -p status-backend
+mkdir -p status-frontend
 
 ## If a settings.js file exists, delete it and create a new one from settings_template.js
 if [ -f "settings.js" ]; then
