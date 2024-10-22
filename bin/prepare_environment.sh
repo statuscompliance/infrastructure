@@ -43,7 +43,6 @@ echo ""
 ## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
 mkdir -p node-red-status
 mkdir -p status-backend
-mkdir -p status-frontend
 
 ## If a settings.js file exists, delete it and create a new one from settings_template.js
 if [ -f "settings.js" ]; then

@@ -10,7 +10,7 @@ services:
     ports:
       - "3001:3001"
     healthcheck:
-      test: curl -f -s http://127.0.0.1:3001/api/user
+      test: wget -q --spider http://127.0.0.1:3001/api/user
       retries: 10
     depends_on:
       mysql:
@@ -41,6 +41,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "1880:1880"
+    healthcheck:
+      test: curl -f -s http://127.0.0.1:1880
+      retries: 10
     volumes:
       - ./node-red-status:/data
       - ./settings.js:/data/settings.js
