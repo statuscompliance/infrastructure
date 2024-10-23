@@ -66,14 +66,17 @@ foreach ($dir in $directories) {
 # Clone repositories
 Write-Host "_______________________CLONING REPOSITORIES_______________________"
 
-git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend ..\status-backend
-git clone -b develop https://github.com/statuscompliance/status-frontend ..\status-frontend
+# git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend ..\status-backend
+# git clone -b develop https://github.com/statuscompliance/status-frontend ..\status-frontend
 
 
 
 # Create node-red-status directory if not exist
 if (-not (Test-Path "..\node-red-status")) {
     New-Item -ItemType Directory -Path "..\node-red-status" | Out-Null
+}
+if (-not (Test-Path "..\status-backend")) {
+    New-Item -ItemType Directory -Path "..\status-backend" | Out-Null
 }
 
 # Delete settings.js if exists and create new from settings_template.js
