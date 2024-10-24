@@ -3,7 +3,7 @@ services:
   status-backend:
     restart: unless-stopped
     container_name: status-backend
-    image: statuscompliance/status-backend:develop
+    image: statuscompliance/status-backend
     # build:
     #   context: ./status-backend
     #   dockerfile: Dockerfile
