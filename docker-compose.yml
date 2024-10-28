@@ -11,7 +11,7 @@ services:
       - "3001:3001"
     healthcheck:
       test: wget -q --spider http://127.0.0.1:3001/api/user
-      retries: 10
+      retries: 15
     depends_on:
       mysql:
         condition: service_healthy
