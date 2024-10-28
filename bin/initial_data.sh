@@ -23,6 +23,7 @@ ENV_FILE="../status-backend/.env"
 
 RESPONSE=$(curl -s -X POST "${BASE_URL}/serviceaccount" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $token" \
   -d '{
         "name": "Status system",
         "role": "Admin"
@@ -38,6 +39,7 @@ fi
 # Crear un nuevo token para la cuenta de servicio
 TOKEN_RESPONSE=$(curl -s -X POST "${BASE_URL}/serviceaccount/${SERVICE_ACCOUNT_ID}/token" \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $token" \
   -d '{
         "name": "STATUS System Token"
       }')
