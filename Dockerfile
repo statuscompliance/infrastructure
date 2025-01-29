@@ -15,4 +15,4 @@ RUN npm install --save @statuscompliance/status@latest  @statuscompliance/contro
 EXPOSE 1880
 
 
-CMD ["node-red"]
+ENTRYPOINT ["node-red"]
