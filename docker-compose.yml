@@ -11,7 +11,7 @@ services:
       test: wget -q --spider http://127.0.0.1:3001/api/user
       retries: 15
     environment:
-      DB_HOST: mysql
+      DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -28,7 +28,7 @@ services:
       GH_CLIENT_ID: ${GH_CLIENT_ID}
       GH_CLIENT_SECRET: ${GH_CLIENT_SECRET}
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
       nodered:
         condition: service_healthy
@@ -38,8 +38,6 @@ services:
       - web_network
       - mysql_network
       - nodered_network
-    volumes:
-      - ./.env:/status-backend/.env
   # ================================================
   status-frontend:
     restart: unless-stopped
@@ -61,7 +59,7 @@ services:
       - "1880:1880"
     healthcheck:
       test: curl -f -s http://127.0.0.1:1880
-      interval: 30s
+      interval: 5s
       timeout: 10s
       retries: 5
     volumes:
@@ -71,28 +69,25 @@ services:
       - web_network
       - nodered_network
   # ================================================
-  mysql:
+  postgres:
     restart: unless-stopped
-    image: mysql:8.3.0
-    container_name: mysql
+    image: postgres:17.2
+    container_name: postgres
     networks:
       - mysql_network
-    env_file:
-      - .env
     environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
-      test: mysqladmin ping -h localhost
+      test: pg_isready -U ${DB_USER}
       interval: 10s
       timeout: 10s
       retries: 10
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql:/var/lib/mysql
+      - postgres:/var/lib/postgresql/data
       - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
   # ================================================
   grafana:
@@ -110,8 +105,9 @@ services:
     volumes:
       - ./grafana/data:/var/lib/grafana
       - ./config:/etc/grafana/provisioning/datasources
+    mem_limit: 400m
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
   # ================================================
   dragonfly:
@@ -153,6 +149,7 @@ services:
   registry:
     container_name: registry
     image: 'governify/registry:develop'
+    # build: ../renovate-reg/regJanuary/registry
     environment:
       - NODE_ENV=development
       - PORT=80
@@ -202,5 +199,4 @@ volumes:
   registry-data:
   nodered:
     name: node-red-status
-  mysql:
-    name: mysql
+  postgres:

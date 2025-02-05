@@ -193,7 +193,7 @@ module.exports = {
    * can be used to specifiy a different root path. If set to false, this is
    * disabled.
    */
-  //httpNodeRoot: '/red-nodes',
+  httpNodeRoot: '/api/v1',
 
   /** The following property can be used to configure cross-origin resource sharing
    * in the HTTP nodes.
