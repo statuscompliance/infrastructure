@@ -27,6 +27,7 @@ services:
       REFRESH_JWT_SECRET: ${REFRESH_JWT_SECRET}
       GH_CLIENT_ID: ${GH_CLIENT_ID}
       GH_CLIENT_SECRET: ${GH_CLIENT_SECRET}
+      REGISTRY_URL: ${REGISTRY_URL}
     depends_on:
       postgres:
         condition: service_healthy
@@ -103,7 +104,7 @@ services:
       - GF_SECURITY_ADMIN_USER=${USER_STATUS}
       - GF_SECURITY_ADMIN_PASSWORD=${PASS_STATUS}
     volumes:
-      - ./grafana/data:/var/lib/grafana
+      - grafana:/var/lib/grafana
       - ./config:/etc/grafana/provisioning/datasources
     mem_limit: 400m
     depends_on:
@@ -200,3 +201,4 @@ volumes:
   nodered:
     name: node-red-status
   postgres:
+  grafana:
