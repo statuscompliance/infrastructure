@@ -15,7 +15,7 @@ $jsonBodySignUp = @{
 } | ConvertTo-Json
 
 # Make POST request to create a new user
-Invoke-WebRequest -Uri "http://localhost:3001/api/user/signUp" -Method POST -ContentType "application/json" -Body $jsonBodySignUp -UseBasicParsing | Out-Null
+Invoke-WebRequest -Uri "http://localhost:3001/api/v1/user/signUp" -Method POST -ContentType "application/json" -Body $jsonBodySignUp -UseBasicParsing | Out-Null
 
 # Sign in to get the access token
 $jsonBodySignIn = @{
@@ -23,13 +23,13 @@ $jsonBodySignIn = @{
     password = "$passwordPlainText"
 } | ConvertTo-Json
 
-$response = Invoke-WebRequest -Uri "http://localhost:3001/api/user/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing
+$response = Invoke-WebRequest -Uri "http://localhost:3001/api/v1/user/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing
 $accessToken = ($response.Content | ConvertFrom-Json).accessToken
 
 Write-Host "Token JWT: $accessToken"
 
-$baseUrl = "http://localhost:3001/api/grafana"
-$envFile = "../status-backend/.env"
+$baseUrl = "http://localhost:3001/api/v1/grafana"
+$envFile = ".env"
 
 $serviceAccountPayload = @{
     name = "Status system"

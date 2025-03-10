@@ -21,7 +21,7 @@ fi
 echo ""
 
 ## Clean up previous installations
-directories=("status-backend" "status-frontend" "node-red-status" "grafana" ".env")
+directories=("status-backend" "frontend" "node-red-status" "grafana" ".env")
 
 for dir in "${directories[@]}"; do
     if [ -d "$dir" ]; then
@@ -32,17 +32,9 @@ done
 
 echo ""
 
-## Clone repositories
-
-# echo "_______________________CLONING REPOSITORIES_______________________"
-
-# git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend status-backend
-# git clone -b develop https://github.com/statuscompliance/status-frontend status-frontend
-
 
 ## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
 mkdir -p node-red-status
-mkdir -p status-backend
 
 ## If a settings.js file exists, delete it and create a new one from settings_template.js
 if [ -f "settings.js" ]; then
@@ -82,8 +74,6 @@ function setVariables() {
 }
 
 setVariables
-
-cp .env status-backend/.env
 
 echo "Node-RED user created successfully."
 echo ""

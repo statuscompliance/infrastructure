@@ -72,7 +72,7 @@ if [ "$rebuild_required" = true ]; then
 
   source bin/cross_platform_utils.sh
   setupCrossPlatformEnvironment
-  compose_file=$(getDockerCompose)
+  compose_file="docker-compose.yml"
 
   docker compose -f $compose_file build
 

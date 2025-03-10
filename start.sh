@@ -14,7 +14,7 @@ EOF
 source bin/cross_platform_utils.sh
 
 setupCrossPlatformEnvironment
-compose_file=$(getDockerCompose)
+compose_file="docker-compose.yml"
 
 echo "Starting the containers on $compose_file..."
 echo ""

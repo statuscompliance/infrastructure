@@ -3,7 +3,7 @@ services:
   status-backend:
     restart: unless-stopped
     container_name: status-backend
-    image: statuscompliance/status-backend
+    image: statuscompliance/status-backend:latest
     # build: ../status-backend
     ports:
       - "3001:3001"
@@ -11,6 +11,10 @@ services:
       test: wget -q --spider http://127.0.0.1:3001/api/user
       retries: 15
     environment:
+      AI_ORG_ID: ${AI_ORG_ID}
+      AI_API_KEY: ${AI_API_KEY}
+      USER_STATUS: ${USER_STATUS}
+      PASS_STATUS: ${PASS_STATUS}
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -28,6 +32,7 @@ services:
       GH_CLIENT_ID: ${GH_CLIENT_ID}
       GH_CLIENT_SECRET: ${GH_CLIENT_SECRET}
       REGISTRY_URL: ${REGISTRY_URL}
+      MONGO_URI: ${MONGO_URI}
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,7 +48,12 @@ services:
   status-frontend:
     restart: unless-stopped
     container_name: status-frontend
-    image: statuscompliance/status-frontend:PR.51
+    image: statuscompliance/frontend:latest
+    environment: 
+      - VITE_BASE_URL=${VITE_BASE_URL}
+      - VITE_NODE_ENV=${VITE_NODE_ENV}
+      - VITE_NODE_RED_URL=${VITE_NODE_RED_URL}
+      - VITE_GRAFANA_URL=${VITE_GRAFANA_URL}
     ports:
       - "3000:80"
     networks:
@@ -58,6 +68,8 @@ services:
     user: "0:0"
     ports:
       - "1880:1880"
+    environment:
+      STATUS_LEDGER_ENDPOINT: ${STATUS_LEDGER_ENDPOINT}
     healthcheck:
       test: curl -f -s http://127.0.0.1:1880
       interval: 5s
@@ -69,6 +81,18 @@ services:
     networks:
       - web_network
       - nodered_network
+  # ================================================
+  # ledger: # This service is experimental
+  #   restart: no
+  #   container_name: ledger
+  #   image: statuscompliance/blockchain
+  #   privileged: true
+  #   ports:
+  #     - 4000:80
+  #   volumes:
+  #     - /Users/alvarobernal/Desktop/LSI/blockchain/app/blockchain-conversion:/chaincodes
+  #   networks:
+  #     - nodered_network
   # ================================================
   postgres:
     restart: unless-stopped
@@ -103,6 +127,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${USER_STATUS}
       - GF_SECURITY_ADMIN_PASSWORD=${PASS_STATUS}
+      - GF_SECURITY_ALLOW_EMBEDDING=true
     volumes:
       - grafana:/var/lib/grafana
       - ./config:/etc/grafana/provisioning/datasources
@@ -149,8 +174,7 @@ services:
   # ================================================
   registry:
     container_name: registry
-    image: 'governify/registry:develop'
-    # build: ../renovate-reg/regJanuary/registry
+    image: 'governify/registry:PR.30'
     environment:
       - NODE_ENV=development
       - PORT=80

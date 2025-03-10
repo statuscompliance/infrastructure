@@ -31,4 +31,4 @@ datasources:
       password: grafanapass
     isDefault: true
     version: 1
-    editable: false
+    editable: true

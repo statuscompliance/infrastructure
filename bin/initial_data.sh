@@ -18,8 +18,8 @@ token=$(docker run --rm --entrypoint jq --env JSON_DATA="$token_payload" linuxse
 
 echo "Token JWT: $token"
 
-BASE_URL="http://localhost:3001/api/grafana"
-ENV_FILE="./status-backend/.env"
+BASE_URL="http://localhost:3001/api/v1/grafana"
+ENV_FILE=".env"
 
 RESPONSE=$(curl -s -X POST "${BASE_URL}/serviceaccount" \
   -H "Content-Type: application/json" \

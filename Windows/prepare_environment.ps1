@@ -63,20 +63,9 @@ foreach ($dir in $directories) {
     }
 }
 
-# Clone repositories
-Write-Host "_______________________CLONING REPOSITORIES_______________________"
-
-# git clone -b feature/33-Integrate_grafana https://github.com/statuscompliance/status-backend ..\status-backend
-# git clone -b develop https://github.com/statuscompliance/status-frontend ..\status-frontend
-
-
-
 # Create node-red-status directory if not exist
 if (-not (Test-Path "..\node-red-status")) {
     New-Item -ItemType Directory -Path "..\node-red-status" | Out-Null
-}
-if (-not (Test-Path "..\status-backend")) {
-    New-Item -ItemType Directory -Path "..\status-backend" | Out-Null
 }
 
 # Delete settings.js if exists and create new from settings_template.js
@@ -106,7 +95,5 @@ docker rmi $bcryptImage > $null 2>&1
 # Replace example_user and example_pass strings with new user and password in settings.js
 (Get-Content "..\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\settings.js"
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
-
-Copy-Item ..\.env ..\status-backend\.env
 
 Write-Host "Node-RED user created successfully."
