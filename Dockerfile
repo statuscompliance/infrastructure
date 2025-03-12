@@ -10,7 +10,7 @@ RUN mkdir -p /npm_cache && \
 
 USER node-red
 
-RUN npm install --save @statuscompliance/status@latest  @statuscompliance/control-flow@latest  @statuscompliance/extraction@latest  @statuscompliance/filtering@latest @statuscompliance/integration@latest  @statuscompliance/logic@latest  @statuscompliance/validation@latest
+RUN npm install --save @statuscompliance/status @statuscompliance/control-flow @statuscompliance/extraction  @statuscompliance/filtering @statuscompliance/integration @statuscompliance/logic @statuscompliance/validation
 
 EXPOSE 1880
 
