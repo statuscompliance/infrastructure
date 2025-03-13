@@ -15,7 +15,12 @@ $ErrorActionPreference = "Stop"
 . .\prepare_environment.ps1
 
 # Step 2: Build and start the containers
-. .\start.ps1
+$ErrorActionPreference = "Stop"
+
+Write-Host "Building and starting the images..."
+
+docker compose -f ../docker-compose.yml --env-file ../.env up --wait
+
 
 # Step 3: Insert initial data
 . .\initial_data.ps1
