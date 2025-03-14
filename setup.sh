@@ -15,7 +15,10 @@ EOF
 source bin/prepare_environment.sh
 
 ## Step 2: Build and start the containers
-source start.sh
+echo "Starting the containers on docker-compose.yml..."
+echo ""
+
+docker compose -f docker-compose.yml up --wait
 
 ## Step 3: Insert initial data
 source bin/initial_data.sh

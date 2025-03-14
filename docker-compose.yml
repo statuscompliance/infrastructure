@@ -1,317 +1,228 @@
 services:
   ############### MICROSERVICES ###############
   status-backend:
-    restart: always
+    restart: unless-stopped
     container_name: status-backend
-    build:
-      context: ./status-backend
-      dockerfile: Dockerfile
+    image: statuscompliance/status-backend:latest
+    # build: ../status-backend
     ports:
       - "3001:3001"
-    networks:
-      - web_network
-      - mysql_network
     healthcheck:
-      test: curl -f -s http://127.0.0.1:3001/api/user
-      retries: 10
+      test: wget -q --spider http://127.0.0.1:3001/api/user
+      retries: 15
+    environment:
+      AI_ORG_ID: ${AI_ORG_ID}
+      AI_API_KEY: ${AI_API_KEY}
+      USER_STATUS: ${USER_STATUS}
+      PASS_STATUS: ${PASS_STATUS}
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      NODE_RED_URL: ${NODE_RED_URL}
+      GRAFANA_URL: ${GRAFANA_URL}
+      GRAFANA_USER: ${GRAFANA_USER}
+      GRAFANA_PASSWORD: ${GRAFANA_PASSWORD}
+      GRAFANA_API_KEY: ${GRAFANA_API_KEY}
+      API_PREFIX: ${API_PREFIX}
+      DRAGONFLY_HOST: ${DRAGONFLY_HOST}
+      DRAGONFLY_PORT: ${DRAGONFLY_PORT}
+      JWT_SECRET: ${JWT_SECRET}
+      REFRESH_JWT_SECRET: ${REFRESH_JWT_SECRET}
+      GH_CLIENT_ID: ${GH_CLIENT_ID}
+      GH_CLIENT_SECRET: ${GH_CLIENT_SECRET}
+      REGISTRY_URL: ${REGISTRY_URL}
+      MONGO_URI: ${MONGO_URI}
     depends_on:
-      mysql:
+      postgres:
         condition: service_healthy
       nodered:
         condition: service_healthy
+      dragonfly:
+        condition: service_healthy
+    networks:
+      - web_network
+      - mysql_network
+      - nodered_network
   # ================================================
   status-frontend:
-    restart: always
+    restart: unless-stopped
     container_name: status-frontend
-    build:
-      context: ./status-frontend
-      dockerfile: Dockerfile
+    image: statuscompliance/frontend:latest
+    environment: 
+      - VITE_BASE_URL=${VITE_BASE_URL}
+      - VITE_NODE_ENV=${VITE_NODE_ENV}
+      - VITE_NODE_RED_URL=${VITE_NODE_RED_URL}
+      - VITE_GRAFANA_URL=${VITE_GRAFANA_URL}
     ports:
       - "3000:80"
     networks:
       - web_network
   # ================================================
   nodered:
-    restart: always
+    restart: unless-stopped
     container_name: node-red-status
     build:
       context: .
       dockerfile: Dockerfile
+    user: "0:0"
     ports:
       - "1880:1880"
+    environment:
+      STATUS_LEDGER_ENDPOINT: ${STATUS_LEDGER_ENDPOINT}
+    healthcheck:
+      test: curl -f -s http://127.0.0.1:1880
+      interval: 5s
+      timeout: 10s
+      retries: 5
     volumes:
-      - ./node-red-status:/data
-      - ./settings.js:/data/settings.js
-    command: node-red
+      - ./node-red-status:/root/.node-red
+      - ./settings.js:/root/.node-red/settings.js
     networks:
       - web_network
+      - nodered_network
   # ================================================
-  bluejay-render:
-    container_name: bluejay-render
-    image: governify/render:develop
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - NODE_ENV=production
-      - PORT=80
-      - LAYOUT=bootstrap5.html
-      - LOGIN_USER=${USER_RENDER:?}
-      - LOGIN_PASSWORD=${PASS_RENDER:?}
-      - DEFAULT_VIEW=http://host.docker.internal:5200/api/v1/public/renders/index/view.html
-      - DEFAULT_CONTROLLER=http://host.docker.internal:5200/api/v1/public/renders/index/controller.js
-      - DEFAULT_MODEL=http://host.docker.internal:5200/api/v1/public/renders/index/model.json
-      - GOV_INFRASTRUCTURE=${GOV_INFRASTRUCTURE:?}
-    volumes:
-      - "../logs/render:/opt/app/logs"
-    ports:
-      - "5100:80"
-    depends_on:
-      - bluejay-assets-manager
-    mem_limit: 400m
-    restart: "unless-stopped"
+  # ledger: # This service is experimental
+  #   restart: no
+  #   container_name: ledger
+  #   image: statuscompliance/blockchain
+  #   privileged: true
+  #   ports:
+  #     - 4000:80
+  #   volumes:
+  #     - /Users/alvarobernal/Desktop/LSI/blockchain/app/blockchain-conversion:/chaincodes
+  #   networks:
+  #     - nodered_network
   # ================================================
-  bluejay-assets-manager:
-    container_name: bluejay-assets-manager
-    image: "governify/assets-manager:develop"
-    # Needed so the volume can be written by the container after creation
-    user: root
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - NODE_ENV=production
-      - PORT=80
-      - LOGIN_USER=${USER_ASSETS:?}
-      - LOGIN_PASSWORD=${PASS_ASSETS:?}
-      - PRIVATE_KEY=${KEY_ASSETS_MANAGER_PRIVATE:?}
-      - GOV_INFRASTRUCTURE=/home/project/public/infrastructure-local.yaml
-      - ASSETS_REPOSITORY=https://github.com/governify/assets-bluejay
-      - ASSETS_REPOSITORY_BRANCH=${ASSETS_REPOSITORY_BRANCH:?}
-    volumes:
-      - "../assets:/home/project"
-    ports:
-      - "5200:80"
-    mem_limit: 400m
-    restart: "unless-stopped"
-  # ================================================
-  bluejay-reporter:
-    container_name: bluejay-reporter
-    build:
-      context: ./reporter
-      dockerfile: Dockerfile
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - NODE_ENV=production
-      - PORT=80
-      - GOV_INFRASTRUCTURE=${GOV_INFRASTRUCTURE:?}
-    volumes:
-      - "../logs/bluejay-reporter:/opt/app/logs"
-    ports:
-      - "5300:80"
-    mem_limit: 400m
-    restart: "unless-stopped"
-    depends_on:
-      - bluejay-assets-manager
-      - bluejay-mongo-registry
-      - bluejay-influx-reporter
-  # ================================================
-  bluejay-registry:
-    container_name: bluejay-registry
-    image: "governify/registry:v3.7.0"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - NODE_ENV=production
-      - PORT=80
-      - GOV_INFRASTRUCTURE=${GOV_INFRASTRUCTURE:?}
-    volumes:
-      - "../logs/registry:/opt/app/logs"
-      - "../static:/opt/app/public/static"
-    ports:
-      - "5400:80"
-    depends_on:
-      - bluejay-assets-manager
-      - bluejay-mongo-registry
-    mem_limit: 400m
-    restart: "unless-stopped"
-  # ================================================
-  bluejay-collector-events:
-    container_name: bluejay-collector-events
-    build:
-      context: ./collector-events
-      dockerfile: Dockerfile
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    env_file:
-      - .env
-    environment:
-      - NODE_ENV=production
-      - PORT=80
-      - KEY_SCOPE_MANAGER=${KEY_SCOPE_MANAGER}
-      - KEY_GITHUB=${KEY_GITHUB}
-      - KEY_PIVOTAL=${KEY_PIVOTAL}
-      - KEY_TRAVIS_PUBLIC=${KEY_TRAVIS_PUBLIC}
-      - KEY_TRAVIS_PRIVATE=${KEY_TRAVIS_PRIVATE}
-      - KEY_HEROKU=${KEY_HEROKU}
-      - KEY_CODECLIMATE=${KEY_CODECLIMATE}
-      - GOV_INFRASTRUCTURE=${GOV_INFRASTRUCTURE:?}
-    ports:
-      - "5500:80"
-    depends_on:
-      - bluejay-assets-manager
-      - bluejay-redis-ec
-    mem_limit: 700m
-    restart: "unless-stopped"
-    networks:
-      - web_network
-  # ================================================
-  bluejay-dashboard:
-    container_name: bluejay-dashboard
-    image: governify/dashboard:develop
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - NODE_ENV=production
-      - INFLUX_URL=http://host.docker.internal:5002
-      - GF_PATHS_PLUGINS=/usr/share/grafana/plugins
-    volumes:
-      - "bluejay-dashboard-volume:/var/lib/grafana"
-    ports:
-      - "5600:3000"
-    depends_on:
-      - bluejay-assets-manager
-      - bluejay-reporter
-    mem_limit: 400m
-    restart: "unless-stopped"
-  # ================================================
-  bluejay-director:
-    container_name: bluejay-director
-    image: "governify/director:develop"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - INFLUXDB_BIND_ADDRESS=:8088
-      - NODE_ENV=production
-      - PORT=80
-      - KEY_ASSETS_MANAGER_PRIVATE=${KEY_ASSETS_MANAGER_PRIVATE}
-      - GOV_INFRASTRUCTURE=${GOV_INFRASTRUCTURE:?}
-    ports:
-      - "5800:80"
-    depends_on:
-      - bluejay-assets-manager
-    mem_limit: 400m
-    restart: "unless-stopped"
-  # ================================================
-  bluejay-scope-manager:
-    container_name: bluejay-scope-manager
-    image: "governify/scope-manager:develop"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - PRIVATE_KEY=${PRIVATE_KEY}
-      - NODE_ENV=production
-      - PORT=80
-      - KEY_ASSETS_MANAGER_PRIVATE=${KEY_ASSETS_MANAGER_PRIVATE}
-      - KEY_SCOPE_MANAGER=${KEY_SCOPE_MANAGER}
-      - KEY_HEROKU=${KEY_HEROKU}
-      - KEY_PIVOTAL=${KEY_PIVOTAL}
-      - KEY_GITHUB=${KEY_GITHUB}
-      - GOV_INFRASTRUCTURE=${GOV_INFRASTRUCTURE:?}
-    ports:
-      - "5700:80"
-    depends_on:
-      - bluejay-assets-manager
-    mem_limit: 400m
-    restart: "unless-stopped"
-  # ================================================
-  bluejay-join:
-    container_name: bluejay-join
-    image: "governify/join-bluejay:develop"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - PRIVATE_KEY=${PRIVATE_KEY}
-      - KEY_GITHUB=${KEY_GITHUB}
-      - NODE_ENV=development
-      - PORT=80
-    ports:
-      - "6001:80"
-    mem_limit: 400m
-    restart: "unless-stopped"
-  ############### DATABASES ###############
-  bluejay-influx-reporter:
-    image: "influxdb:1.8.4-alpine"
-    container_name: bluejay-influx-reporter
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    environment:
-      - INFLUXDB_BIND_ADDRESS=:8088
-    volumes:
-      - "bluejay-influx-reporter-volume:/var/lib/influxdb"
-      - "../configurations/influxdb:/etc/influxdb"
-    ports:
-      - "5002:8086"
-      - "8088:8088"
-    mem_limit: 1200m
-    restart: "unless-stopped"
-  # ================================================
-  bluejay-mongo-registry:
-    container_name: bluejay-mongo-registry
-    image: mongo
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - "bluejay-mongo-registry-volume:/data/db"
-    ports:
-      - "5001:27017"
-    mem_limit: 3000m
-    restart: "unless-stopped"
-  # ================================================
-  bluejay-redis-ec:
-    container_name: bluejay-redis-ec
-    image: redis
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    volumes:
-      - "bluejay-redis-ec-volume:/data"
-    ports:
-      - "5003:6379"
-    mem_limit: 1200m
-    restart: "unless-stopped"
-  # ================================================
-  mysql:
-    restart: always
-    image: mysql:8.3.0
-    container_name: mysql
+  postgres:
+    restart: unless-stopped
+    image: postgres:17.2
+    container_name: postgres
     networks:
       - mysql_network
-    env_file:
-      - .env
     environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     healthcheck:
-      test: mysqladmin ping -h localhost
-      start_period: 10s
+      test: pg_isready -U ${DB_USER}
+      interval: 10s
+      timeout: 10s
       retries: 10
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql:/var/lib/mysql
+      - postgres:/var/lib/postgresql/data
+      - ./config/init.sql:/docker-entrypoint-initdb.d/init.sql
+  # ================================================
+  grafana:
+    restart: unless-stopped
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    user: root
+    ports:
+      - "3100:3000"
+    networks:
+      - mysql_network
+    environment:
+      - GF_SECURITY_ADMIN_USER=${USER_STATUS}
+      - GF_SECURITY_ADMIN_PASSWORD=${PASS_STATUS}
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+    volumes:
+      - grafana:/var/lib/grafana
+      - ./config:/etc/grafana/provisioning/datasources
+    mem_limit: 400m
+    depends_on:
+      postgres:
+        condition: service_healthy
+  # ================================================
+  dragonfly:
+    restart: unless-stopped
+    image: ghcr.io/dragonflydb/dragonfly:latest
+    container_name: dragonfly
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    ports:
+      - '6379:6379'
+    networks:
+      - mysql_network
+    volumes:
+      - dragonfly-data:/data/dragonfly
+  # ================================================
+  director:
+    container_name: director
+    image: 'governify/director:develop'
+    environment:
+      - NODE_ENV=production
+      - PORT=80
+      - GOV_INFRASTRUCTURE=./infrastructure.yaml
+    ports:
+      - '5800:80'
+    healthcheck:
+      test: curl -f http://localhost:80/info
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - mysql_network
+    mem_limit: 400m
+    restart: 'unless-stopped'
+  # ================================================
+  registry:
+    container_name: registry
+    image: 'governify/registry:PR.30'
+    environment:
+      - NODE_ENV=development
+      - PORT=80
+      - GOV_INFRASTRUCTURE=./infrastructure.yaml
+      - GOV_LOG_LEVEL=debug
+      - MONGOPASS=${MONGOPASS}
+      - MONGOADMIN=${MONGOADMIN}
+      - HTTPS_SERVER=${HTTPS_SERVER}
+      - OASTLM_MODULE_DISABLED=${OASTLM_MODULE_DISABLED}
+    volumes:
+      - '../logs/registry:/opt/app/logs'
+      - '../static:/opt/app/public/static'
+    ports:
+      - '5400:80'
+    depends_on:
+      - mongo-registry
+    networks:
+      - mysql_network
+    mem_limit: 400m
+    restart: 'unless-stopped'
+  # ================================================
+  mongo-registry:
+    container_name: mongo-registry
+    image: mongo:latest
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGOADMIN}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGOPASS}
+    volumes:
+      - 'registry-data:/data/db'
+    ports:
+      - "5001:27017"
+    networks:
+      - mysql_network
+    mem_limit: 2000m
+    restart: 'unless-stopped'
+
 networks:
   mysql_network:
     driver: bridge
   web_network:
     driver: bridge
+  nodered_network:
+    driver: bridge
 
 volumes:
-  bluejay-influx-reporter-volume: null
-  bluejay-mongo-registry-volume: null
-  bluejay-dashboard-volume: null
-  bluejay-redis-ec-volume: null
+  dragonfly-data:
+  registry-data:
   nodered:
     name: node-red-status
-  mysql:
-    name: mysql
+  postgres:
+  grafana:

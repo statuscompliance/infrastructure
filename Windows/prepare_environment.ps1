@@ -54,7 +54,7 @@ else {
 }
 
 # Clean up previous installations
-$directories = "status-backend", "status-frontend", "node-red-status", "mysql", "collector-events", "reporter"
+$directories = "status-backend", "status-frontend", "node-red-status", "mysql", "grafana"
 
 foreach ($dir in $directories) {
     if (Test-Path "..\$dir") {
@@ -62,16 +62,6 @@ foreach ($dir in $directories) {
         Remove-Item -Path "..\$dir" -Recurse -Force
     }
 }
-
-# Clone repositories
-Write-Host "_______________________CLONING REPOSITORIES_______________________"
-
-git clone -b develop https://github.com/statuscompliance/status-backend ..\status-backend
-git clone -b develop https://github.com/statuscompliance/status-frontend ..\status-frontend
-git clone https://github.com/statuscompliance/reporter ..\reporter
-git clone https://github.com/statuscompliance/collector-events ..\collector-events
-
-
 
 # Create node-red-status directory if not exist
 if (-not (Test-Path "..\node-red-status")) {
@@ -105,8 +95,5 @@ docker rmi $bcryptImage > $null 2>&1
 # Replace example_user and example_pass strings with new user and password in settings.js
 (Get-Content "..\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\settings.js"
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
-
-Copy-Item ..\.env ..\status-backend\.env
-Copy-Item ..\.env ..\collector-events\.env
 
 Write-Host "Node-RED user created successfully."

@@ -1,4 +1,4 @@
-FROM nodered/node-red:3.1.3
+FROM nodered/node-red:3.1.14-minimal
 
 ## As /data is usually going to be used to provide the node-red flows, we change the cache
 ## to another directory, since when mounting /data the cache will be lost
@@ -10,6 +10,9 @@ RUN mkdir -p /npm_cache && \
 
 USER node-red
 
-RUN npm install --save @alvarobc2412/status@latest
+RUN npm install --save @statuscompliance/status @statuscompliance/control-flow @statuscompliance/extraction  @statuscompliance/filtering @statuscompliance/integration @statuscompliance/logic @statuscompliance/validation
 
 EXPOSE 1880
+
+
+ENTRYPOINT ["node-red"]
