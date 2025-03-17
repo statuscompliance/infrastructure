@@ -75,7 +75,7 @@ function setVariables() {
 
     output=$(sed -e "s/example_user/$username/g" ./config/init.sql)
     output=$(echo "$output" | sed -e "s/example_pass/$encrypted_password/g")
-    output=$(echo "$output" | sed -e "s/email/$email/g")
+    output=$(echo "$output" | sed -e "s/email_example/$email/g")
     echo "$output" > ./config/init.sql
 }
 
