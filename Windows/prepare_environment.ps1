@@ -95,5 +95,7 @@ docker rmi $bcryptImage > $null 2>&1
 # Replace example_user and example_pass strings with new user and password in settings.js
 (Get-Content "..\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\settings.js"
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
+(Get-Content "..\config\init.sql") -replace 'example_user', $username -replace 'example_pass', $hashedPassword -replace 'email', $email | Set-Content "..\config\init.sql"
+
 
 Write-Host "Node-RED user created successfully."

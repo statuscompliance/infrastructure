@@ -5,10 +5,6 @@ set -e
 echo ""
 echo "_______________________INITIAL DATA_______________________"
 
-curl -s -X POST http://localhost:3001/api/user/signUp \
-     -H "Content-Type: application/json" \
-     -d "{ \"username\": \"${username}\", \"password\": \"${password}\", \"authority\": \"ADMIN\", \"email\": \"${email}\" }" > /dev/null 2>&1
-
 token_payload=$(curl -s -X POST http://localhost:3001/api/user/signIn \
      -H "Content-Type: application/json" \
      -d "{ \"username\": \"${username}\", \"password\": \"${password}\" }")
