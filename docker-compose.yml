@@ -40,9 +40,11 @@ services:
         condition: service_healthy
       dragonfly:
         condition: service_healthy
+      mongo-registry:
+        condition: service_healthy
     networks:
       - web_network
-      - mysql_network
+      - db_network
       - nodered_network
   # ================================================
   status-frontend:
@@ -99,7 +101,7 @@ services:
     image: postgres:17.2
     container_name: postgres
     networks:
-      - mysql_network
+      - db_network
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -119,11 +121,11 @@ services:
     restart: unless-stopped
     image: grafana/grafana-oss:latest
     container_name: grafana
-    user: root
+    user: grafanauser
     ports:
       - "3100:3000"
     networks:
-      - mysql_network
+      - db_network
     environment:
       - GF_SECURITY_ADMIN_USER=${USER_STATUS}
       - GF_SECURITY_ADMIN_PASSWORD=${PASS_STATUS}
@@ -149,7 +151,7 @@ services:
     ports:
       - '6379:6379'
     networks:
-      - mysql_network
+      - db_network
     volumes:
       - dragonfly-data:/data/dragonfly
   # ================================================
@@ -164,11 +166,11 @@ services:
       - '5800:80'
     healthcheck:
       test: curl -f http://localhost:80/info
-      interval: 30s
-      timeout: 10s
+      interval: 5s
+      timeout: 5s
       retries: 5
     networks:
-      - mysql_network
+      - db_network
     mem_limit: 400m
     restart: 'unless-stopped'
   # ================================================
@@ -192,7 +194,7 @@ services:
     depends_on:
       - mongo-registry
     networks:
-      - mysql_network
+      - db_network
     mem_limit: 400m
     restart: 'unless-stopped'
   # ================================================
@@ -202,17 +204,23 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGOADMIN}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGOPASS}
+    healthcheck:
+      test: echo 'db.stats().ok' | mongo -u ${MONGOADMIN} -p ${MONGOPASS} --authenticationDatabase admin
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
     volumes:
       - 'registry-data:/data/db'
     ports:
       - "5001:27017"
     networks:
-      - mysql_network
+      - db_network
     mem_limit: 2000m
     restart: 'unless-stopped'
 
 networks:
-  mysql_network:
+  db_network:
     driver: bridge
   web_network:
     driver: bridge
