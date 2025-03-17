@@ -67,10 +67,16 @@ function setVariables() {
     echo "$output" > settings.js
     output=$(sed -e "s/\"example_pass\"/\"$encrypted_password\"/g" settings.js)
     echo "$output" > settings.js
+
     output=$(sed -e "s/example_user/$username/g" .env.deploy)
     echo "$output" > .env
     output=$(sed -e "s/example_pass/$password/g" .env)
     echo "$output" > .env
+
+    output=$(sed -e "s/example_user/$username/g" ./config/init.sql)
+    output=$(echo "$output" | sed -e "s/example_pass/$encrypted_password/g")
+    output=$(echo "$output" | sed -e "s/email/$email/g")
+    echo "$output" > ./config/init.sql
 }
 
 setVariables
