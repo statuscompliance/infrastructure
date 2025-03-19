@@ -3,8 +3,8 @@ services:
   status-backend:
     restart: unless-stopped
     container_name: status-backend
-    image: statuscompliance/status-backend:latest
-    # build: ../status-backend
+    # image: statuscompliance/status-backend:latest
+    build: ../status-backend
     ports:
       - "3001:3001"
     healthcheck:
@@ -85,16 +85,16 @@ services:
       - nodered_network
   # ================================================
   # ledger: # This service is experimental
-  #   restart: no
-  #   container_name: ledger
-  #   image: statuscompliance/blockchain
-  #   privileged: true
-  #   ports:
-  #     - 4000:80
-  #   volumes:
-  #     - /Users/alvarobernal/Desktop/LSI/blockchain/app/blockchain-conversion:/chaincodes
-  #   networks:
-  #     - nodered_network
+    # restart: no
+    # container_name: ledger
+    # image: statuscompliance/blockchain
+    # privileged: true
+    # ports:
+    #   - 4000:80
+    # volumes:
+    #   - /Users/alvarobernal/Desktop/LSI/blockchain/app/blockchain-conversion:/chaincodes
+    # networks:
+    #   - nodered_network
   # ================================================
   postgres:
     restart: unless-stopped
@@ -205,7 +205,7 @@ services:
       - MONGO_INITDB_ROOT_USERNAME=${MONGOADMIN}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGOPASS}
     healthcheck:
-      test: echo 'db.stats().ok' | mongo -u ${MONGOADMIN} -p ${MONGOPASS} --authenticationDatabase admin
+      test: ["CMD", "mongosh", "--eval", "db.runCommand('ping').ok"]
       interval: 5s
       timeout: 5s
       retries: 3
