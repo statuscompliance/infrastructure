@@ -44,14 +44,24 @@ fi
 
 cp settings_template.js settings.js
 
-## Create a new user and password for Node-RED
+## Ask if default user credentials should be used
+echo "_______________________USER CONFIGURATION_______________________"
+read -p "Do you want to use the default user (admin/admin123)? (y/n): " use_default
 
-echo "_______________________CREATE YOUR USER_______________________"
-read -p "Enter a new username: " username
-read -s -p "Enter a new password: " password
-echo
-read -p "Enter your email: " email
-echo # newline
+if [ "$use_default" = "y" ] || [ "$use_default" = "Y" ]; then
+    username="admin"
+    password="admin123"
+    email="admin@example.com"
+    echo "Using default credentials: username=$username, email=$email"
+else
+    ## Create a new user and password for Node-RED
+    echo "_______________________CREATE YOUR USER_______________________"
+    read -p "Enter a new username: " username
+    read -s -p "Enter a new password: " password
+    echo
+    read -p "Enter your email: " email
+    echo # newline
+fi
 
 # Hash the password
 docker pull epicsoft/bcrypt > /dev/null 2>&1
@@ -72,14 +82,14 @@ function setVariables() {
     echo "$output" > .env
     output=$(sed -e "s/example_pass/$password/g" .env)
     echo "$output" > .env
-
-    output=$(sed -e "s/example_user/$username/g" ./config/init.sql)
-    output=$(echo "$output" | sed -e "s/example_pass/$encrypted_password/g")
-    output=$(echo "$output" | sed -e "s/email_example/$email/g")
-    echo "$output" > ./config/init.sql
 }
 
 setVariables
+
+# Export the variables for use in other scripts
+export username
+export password
+export email
 
 echo "Node-RED user created successfully."
 echo ""

@@ -20,7 +20,11 @@ echo ""
 
 docker compose -f docker-compose.yml up --wait
 
-## Step 3: Insert initial data
+## Step 3: Populate the database with initial data
+echo "Populating the database with initial data..."
+docker exec status-backend npm run populate
+
+## Step 4: Insert initial data
 source bin/initial_data.sh
 
 echo "Infrastructure up and running successfully."

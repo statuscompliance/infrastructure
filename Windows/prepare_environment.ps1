@@ -76,15 +76,26 @@ if (Test-Path "..\settings.js") {
 
 Copy-Item ..\settings_template.js ..\settings.js
 
-# Create a new user and password for Node-RED
-Write-Host "_______________________CREATE YOUR USER_______________________"
+# Ask if default user credentials should be used
+Write-Host "_______________________USER CONFIGURATION_______________________"
+$useDefault = Read-Host "Do you want to use the default user (admin/admin123)? (y/n)"
 
-$username = Read-Host "Enter a new username"
-$password = Read-Host "Enter a new password" -AsSecureString
-$email = Read-Host "Enter your email"
-
-# Convert secure password to plain text
-$passwordPlainText = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($password))
+if ($useDefault -eq "y" -or $useDefault -eq "Y") {
+    $username = "admin"
+    $passwordPlainText = "admin123"
+    $email = "admin@example.com"
+    Write-Host "Using default credentials: username=$username, email=$email"
+    # Create a secure string for the password
+    $password = ConvertTo-SecureString $passwordPlainText -AsPlainText -Force
+} else {
+    # Create a new user and password for Node-RED
+    Write-Host "_______________________CREATE YOUR USER_______________________"
+    $username = Read-Host "Enter a new username"
+    $password = Read-Host "Enter a new password" -AsSecureString
+    $email = Read-Host "Enter your email"
+    # Convert secure password to plain text for later use
+    $passwordPlainText = [Runtime.InteropServices.Marshal]::PtrToStringAuto([Runtime.InteropServices.Marshal]::SecureStringToBSTR($password))
+}
 
 # Hash the password using bcrypt
 $bcryptImage = 'epicsoft/bcrypt'
@@ -95,7 +106,10 @@ docker rmi $bcryptImage > $null 2>&1
 # Replace example_user and example_pass strings with new user and password in settings.js
 (Get-Content "..\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\settings.js"
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
-(Get-Content "..\config\init.sql") -replace 'example_user', $username -replace 'example_pass', $hashedPassword -replace 'email_example', $email | Set-Content "..\config\init.sql"
 
+# Export variables for other scripts
+$global:username = $username
+$global:passwordPlainText = $passwordPlainText
+$global:email = $email
 
 Write-Host "Node-RED user created successfully."

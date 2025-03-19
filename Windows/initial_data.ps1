@@ -6,28 +6,31 @@ Write-Host "_______________________INITIAL DATA_______________________"
 # Disable SSL verification
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
-# Define JSON payload for creating a new user
-$jsonBodySignUp = @{
-    username = "$username"
-    password = "$passwordPlainText"
-    authority = "ADMIN"
-    email = "$email"
+# Define JSON payload for sign in
+$jsonBodySignIn = @{
+    username = $global:username
+    password = $global:passwordPlainText
 } | ConvertTo-Json
 
-$response = Invoke-WebRequest -Uri "http://localhost:3001/api/v1/user/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing
+$response = Invoke-WebRequest -Uri "http://localhost:3001/api/user/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing
 $accessToken = ($response.Content | ConvertFrom-Json).accessToken
 
 Write-Host "Token JWT: $accessToken"
 
 $baseUrl = "http://localhost:3001/api/v1/grafana"
-$envFile = ".env"
+$envFile = "..\.env"
+
+$headers = @{
+    "Authorization" = "Bearer $accessToken"
+    "Content-Type" = "application/json"
+}
 
 $serviceAccountPayload = @{
     name = "Status system"
     role = "Admin"
 } | ConvertTo-Json
 
-$responseServiceAccount = Invoke-WebRequest -Uri "$baseUrl/serviceaccount" -Method POST -ContentType "application/json" -Body $serviceAccountPayload -UseBasicParsing
+$responseServiceAccount = Invoke-WebRequest -Uri "$baseUrl/serviceaccount" -Method POST -Headers $headers -Body $serviceAccountPayload -UseBasicParsing
 $serviceAccountId = ($responseServiceAccount.Content | ConvertFrom-Json).id
 
 if (-not $serviceAccountId) {
@@ -39,7 +42,7 @@ $tokenPayload = @{
     name = "STATUS System Token"
 } | ConvertTo-Json
 
-$responseToken = Invoke-WebRequest -Uri "$baseUrl/serviceaccount/$serviceAccountId/token" -Method POST -ContentType "application/json" -Body $tokenPayload -UseBasicParsing
+$responseToken = Invoke-WebRequest -Uri "$baseUrl/serviceaccount/$serviceAccountId/token" -Method POST -Headers $headers -Body $tokenPayload -UseBasicParsing
 $tokenKey = ($responseToken.Content | ConvertFrom-Json).key
 
 if (-not $tokenKey) {

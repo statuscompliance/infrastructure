@@ -21,8 +21,11 @@ Write-Host "Building and starting the images..."
 
 docker compose -f ../docker-compose.yml --env-file ../.env up --wait
 
+# Step 3: Populate the database with initial data
+Write-Host "Populating the database with initial data..."
+docker exec status-backend npm run populate
 
-# Step 3: Insert initial data
+# Step 4: Insert initial data
 . .\initial_data.ps1
 
 Write-Host "Infrastructure up and running successfully."
