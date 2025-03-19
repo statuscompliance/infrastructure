@@ -83,7 +83,13 @@ module.exports = {
       {
         username: "admin",
         password:
-          "$2a$12$TmRzHXqhmei9li1maIDKKeMt20p4lKqxqNAfKNhXEy99XkA5yjGl2",
+          "$2a$12$.eTiuhjetkc/wv14Q.mL/Ol/i0IFHilLMpVwkPx4oq0lezJwmZ.f2",
+        permissions: "*",
+      },
+      {
+        username: "developer",
+        password:
+          "$2a$12$.pB1blMpPJJ42Dd1PiWYne4uxE8NrCHnioblVdp65MbOOkXRRLHNW",
         permissions: "*",
       },
     ],
@@ -129,10 +135,20 @@ module.exports = {
    * The `pass` field is a bcrypt hash of the password.
    * See http://nodered.org/docs/security.html#generating-the-password-hash
    */
-  httpNodeAuth: {
-    user: "example_user",
-    pass: "example_pass",
-  },
+  httpNodeAuth: [
+    {
+      user: "example_user",
+      pass: "example_pass",
+    },
+    {
+      user: "admin",
+      pass: "$2a$12$.eTiuhjetkc/wv14Q.mL/Ol/i0IFHilLMpVwkPx4oq0lezJwmZ.f2",
+    },
+    {
+      user: "developer",
+      pass: "$2a$12$.pB1blMpPJJ42Dd1PiWYne4uxE8NrCHnioblVdp65MbOOkXRRLHNW",
+    },
+  ],
   //httpStaticAuth: {user:"user",pass:"$2a$08$zZWtXTja0fB1pzD4sHCMyOCMYz2Z6dNbM6tl8sJogENOMcxWV9DN."},
 
   /*******************************************************************************
