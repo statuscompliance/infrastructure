@@ -1,4 +1,4 @@
-FROM nodered/node-red:3.1.14-minimal
+FROM nodered/node-red:4.0.9-22-minimal
 
 ## As /data is usually going to be used to provide the node-red flows, we change the cache
 ## to another directory, since when mounting /data the cache will be lost
