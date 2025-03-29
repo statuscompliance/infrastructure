@@ -118,7 +118,6 @@ services:
     restart: unless-stopped
     image: grafana/grafana-oss
     container_name: grafana
-    user: grafanauser
     ports:
       - "3100:3000"
     networks:
