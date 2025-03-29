@@ -7,7 +7,7 @@ services:
     ports:
       - "3001:3001"
     healthcheck:
-      test: wget -q --spider http://127.0.0.1:3001/api/user
+      test: wget -q --spider http://127.0.0.1:3001
       retries: 15
     environment:
       AI_ORG_ID: ${AI_ORG_ID}
@@ -161,7 +161,7 @@ services:
     ports:
       - '5800:80'
     healthcheck:
-      test: curl -f http://localhost:80/info
+      test: wget -q --spider http://127.0.0.1:80/info
       interval: 5s
       timeout: 5s
       retries: 5
