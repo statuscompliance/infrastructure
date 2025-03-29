@@ -54,7 +54,7 @@ else {
 }
 
 # Clean up previous installations
-$directories = "status-backend", "status-frontend", "node-red-status", "mysql", "grafana"
+$directories = "node-red-status", ".env"
 
 foreach ($dir in $directories) {
     if (Test-Path "..\$dir") {

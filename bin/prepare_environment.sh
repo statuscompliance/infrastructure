@@ -21,7 +21,7 @@ fi
 echo ""
 
 ## Clean up previous installations
-directories=("status-backend" "frontend" "node-red-status" "grafana" ".env")
+directories=("node-red-status" ".env")
 
 for dir in "${directories[@]}"; do
     if [ -d "$dir" ]; then

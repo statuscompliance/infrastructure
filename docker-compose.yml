@@ -3,8 +3,7 @@ services:
   status-backend:
     restart: unless-stopped
     container_name: status-backend
-    # image: statuscompliance/status-backend:latest
-    build: ../status-backend
+    image: statuscompliance/status-backend:latest
     ports:
       - "3001:3001"
     healthcheck:
@@ -64,9 +63,7 @@ services:
   nodered:
     restart: unless-stopped
     container_name: node-red-status
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: statuscompliance/node-red-status:latest
     user: "0:0"
     ports:
       - "1880:1880"
