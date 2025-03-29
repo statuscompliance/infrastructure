@@ -8,8 +8,8 @@ Write-Host "_______________________INITIAL DATA_______________________"
 
 # Define JSON payload for sign in
 $jsonBodySignIn = @{
-    username = $global:username
-    password = $global:passwordPlainText
+    username = $username
+    password = $passwordPlainText
 } | ConvertTo-Json
 
 $response = Invoke-WebRequest -Uri "http://localhost:3001/api/user/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing

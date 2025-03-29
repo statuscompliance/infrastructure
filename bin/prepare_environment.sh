@@ -86,10 +86,5 @@ function setVariables() {
 
 setVariables
 
-# Export the variables for use in other scripts
-export username
-export password
-export email
-
 echo "Node-RED user created successfully."
 echo ""

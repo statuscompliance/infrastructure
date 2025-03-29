@@ -107,9 +107,4 @@ docker rmi $bcryptImage > $null 2>&1
 (Get-Content "..\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\settings.js"
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
 
-# Export variables for other scripts
-$global:username = $username
-$global:passwordPlainText = $passwordPlainText
-$global:email = $email
-
 Write-Host "Node-RED user created successfully."
