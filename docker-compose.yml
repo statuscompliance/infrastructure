@@ -3,7 +3,7 @@ services:
   status-backend:
     restart: unless-stopped
     container_name: status-backend
-    image: statuscompliance/status-backend:latest
+    image: ghcr.io/statuscompliance/status-backend
     ports:
       - "3001:3001"
     healthcheck:
@@ -49,7 +49,7 @@ services:
   status-frontend:
     restart: unless-stopped
     container_name: status-frontend
-    image: statuscompliance/frontend:latest
+    image: ghcr.io/statuscompliance/frontend
     environment: 
       - VITE_BASE_URL=${VITE_BASE_URL}
       - VITE_NODE_ENV=${VITE_NODE_ENV}
@@ -63,7 +63,7 @@ services:
   nodered:
     restart: unless-stopped
     container_name: node-red-status
-    image: statuscompliance/node-red-status:latest
+    image: ghcr.io/statuscompliance/node-red-status
     user: "0:0"
     ports:
       - "1880:1880"
@@ -116,7 +116,7 @@ services:
   # ================================================
   grafana:
     restart: unless-stopped
-    image: grafana/grafana-oss:latest
+    image: grafana/grafana-oss
     container_name: grafana
     user: grafanauser
     ports:
@@ -137,7 +137,7 @@ services:
   # ================================================
   dragonfly:
     restart: unless-stopped
-    image: ghcr.io/dragonflydb/dragonfly:latest
+    image: ghcr.io/dragonflydb/dragonfly
     container_name: dragonfly
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -197,7 +197,7 @@ services:
   # ================================================
   mongo-registry:
     container_name: mongo-registry
-    image: mongo:latest
+    image: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGOADMIN}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGOPASS}
