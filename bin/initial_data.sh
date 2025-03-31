@@ -5,7 +5,7 @@ set -e
 echo ""
 echo "_______________________INITIAL DATA_______________________"
 
-token_payload=$(curl -s -X POST http://localhost:3001/api/user/signIn \
+token_payload=$(curl -s -X POST http://localhost:3001/api/v1/users/signIn \
      -H "Content-Type: application/json" \
      -d "{ \"username\": \"${username}\", \"password\": \"${password}\" }")
 

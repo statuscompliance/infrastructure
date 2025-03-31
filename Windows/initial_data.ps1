@@ -12,7 +12,7 @@ $jsonBodySignIn = @{
     password = $passwordPlainText
 } | ConvertTo-Json
 
-$response = Invoke-WebRequest -Uri "http://localhost:3001/api/user/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing
+$response = Invoke-WebRequest -Uri "http://localhost:3001/api/v1/users/signIn" -Method POST -ContentType "application/json" -Body $jsonBodySignIn -UseBasicParsing
 $accessToken = ($response.Content | ConvertFrom-Json).accessToken
 
 Write-Host "Token JWT: $accessToken"
