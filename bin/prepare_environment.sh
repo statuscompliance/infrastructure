@@ -65,7 +65,7 @@ fi
 
 # Hash the password
 docker pull epicsoft/bcrypt > /dev/null 2>&1
-encrypted_password=$(docker run --rm epicsoft/bcrypt hash "$password" 10 | sed -e 's/[\/&]/\\&/g')
+encrypted_password=$(docker run --rm epicsoft/bcrypt hash "$password" 12)
 docker rmi epicsoft/bcrypt > /dev/null 2>&1
 
 ## Replace the example_user and example_pass strings with the new user and password
