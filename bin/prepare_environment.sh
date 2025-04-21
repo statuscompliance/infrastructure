@@ -21,7 +21,7 @@ fi
 echo ""
 
 ## Clean up previous installations
-directories=("node-red-status" ".env")
+directories=("node-red-status" ".env" "settings.js")
 
 for dir in "${directories[@]}"; do
     if [ -d "$dir" ]; then
@@ -32,17 +32,8 @@ done
 
 echo ""
 
-
 ## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
 mkdir -p node-red-status
-
-## If a settings.js file exists, delete it and create a new one from settings_template.js
-if [ -f "settings.js" ]; then
-    echo "Deleting settings.js..."
-    rm settings.js
-fi
-
-cp settings_template.js settings.js
 
 ## Ask if default user credentials should be used
 echo "_______________________USER CONFIGURATION_______________________"
@@ -65,23 +56,23 @@ fi
 
 # Hash the password
 docker pull epicsoft/bcrypt > /dev/null 2>&1
-encrypted_password=$(docker run --rm epicsoft/bcrypt hash "$password" 10 | sed -e 's/[\/&]/\\&/g')
+encrypted_password=$(docker run --rm epicsoft/bcrypt hash "$password" 12)
 docker rmi epicsoft/bcrypt > /dev/null 2>&1
 
-## Replace the example_user and example_pass strings with the new user and password
-## Due to differences in GNU and Mac implementations, we don't do it in place
-
 function setVariables() {
-    local output
-    output=$(sed -e "s/\"example_user\"/\"$username\"/g" settings.js)
-    echo "$output" > settings.js
-    output=$(sed -e "s/\"example_pass\"/\"$encrypted_password\"/g" settings.js)
-    echo "$output" > settings.js
+  local contents
 
-    output=$(sed -e "s/example_user/$username/g" .env.deploy)
-    echo "$output" > .env
-    output=$(sed -e "s/example_pass/$password/g" .env)
-    echo "$output" > .env
+  contents=$(< settings_template.js)
+  contents="${contents//\"example_user\"/\"$username\"}"
+  contents="${contents//\"example_pass\"/\"$encrypted_password\"}"
+
+  echo "$contents" > settings.js
+
+  contents=$(< .env.deploy)
+  contents="${contents//example_user/$username}"
+  contents="${contents//example_pass/$password}"
+
+  echo "$contents" > .env
 }
 
 setVariables

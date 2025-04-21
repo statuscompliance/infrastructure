@@ -100,7 +100,7 @@ if ($useDefault -eq "y" -or $useDefault -eq "Y") {
 # Hash the password using bcrypt
 $bcryptImage = 'epicsoft/bcrypt'
 docker pull $bcryptImage > $null 2>&1
-$hashedPassword = & docker run --rm $bcryptImage hash "$passwordPlainText" 10
+$hashedPassword = & docker run --rm $bcryptImage hash "$passwordPlainText" 12
 docker rmi $bcryptImage > $null 2>&1
 
 # Replace example_user and example_pass strings with new user and password in settings.js
