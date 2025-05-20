@@ -32,6 +32,9 @@ services:
       GH_CLIENT_SECRET: ${GH_CLIENT_SECRET}
       REGISTRY_URL: ${REGISTRY_URL}
       MONGO_URI: ${MONGO_URI}
+      MONGO_LOGGING_ENABLED: true
+      MONGO_LOG_URI: ${MONGO_LOG_URI}
+      LOG_LEVEL: info
     depends_on:
       postgres:
         condition: service_healthy
@@ -152,11 +155,14 @@ services:
   # ================================================
   director:
     container_name: director
-    image: ghcr.io/governify/director:develop
+    image: ghcr.io/governify/director:pr.39
     environment:
       - NODE_ENV=production
       - PORT=80
       - GOV_INFRASTRUCTURE=./infrastructure.yaml
+      - GOV_LOG_MONGODB_ENABLED=true
+      - GOV_LOG_MONGODB_URI=${MONGO_LOG_URI}
+      - GOV_LOG_MONGODB_LEVEL=INFO
     ports:
       - 5800:80
     healthcheck:
@@ -171,7 +177,7 @@ services:
   # ================================================
   registry:
     container_name: registry
-    image: ghcr.io/governify/registry:develop
+    image: ghcr.io/governify/registry:pr.35
     environment:
       - NODE_ENV=development
       - PORT=80
@@ -181,6 +187,9 @@ services:
       - MONGOADMIN=${MONGOADMIN}
       - HTTPS_SERVER=${HTTPS_SERVER}
       - OASTLM_MODULE_DISABLED=${OASTLM_MODULE_DISABLED}
+      - GOV_LOG_MONGODB_ENABLED=true
+      - GOV_LOG_MONGODB_URI=${MONGO_LOG_URI}
+      - GOV_LOG_MONGODB_LEVEL=INFO
     volumes:
       - '../logs/registry:/opt/app/logs'
       - '../static:/opt/app/public/static'
