@@ -5,7 +5,7 @@ services:
     container_name: status-backend
     image: ghcr.io/statuscompliance/status-backend:develop
     ports:
-      - 3002:3001
+      - 3001:3001
     healthcheck:
       test: wget -q --spider http://127.0.0.1:3001
       retries: 15
@@ -63,6 +63,13 @@ services:
       - 3000:80
     networks:
       - web_network
+    depends_on:
+      nodered:
+        condition: service_healthy
+      status-backend:
+        condition: service_healthy
+      grafana:
+        condition: service_started
   # ================================================
   nodered:
     restart: unless-stopped
@@ -123,15 +130,16 @@ services:
     container_name: grafana
     ports:
       - 3100:3000
-    networks:
-      - db_network
     environment:
       - GF_SECURITY_ADMIN_USER=${USER_STATUS}
       - GF_SECURITY_ADMIN_PASSWORD=${PASS_STATUS}
-      - GF_SECURITY_ALLOW_EMBEDDING=true
+    networks:
+      - db_network
+      - web_network
     volumes:
       - grafana:/var/lib/grafana
       - ./config:/etc/grafana/provisioning/datasources
+      - ./config/grafana.ini:/etc/grafana/grafana.ini
     mem_limit: 400m
     depends_on:
       postgres:
@@ -239,3 +247,4 @@ volumes:
     name: node-red-status
   postgres:
   grafana:
+    name: grafana-status
