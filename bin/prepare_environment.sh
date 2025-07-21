@@ -35,6 +35,21 @@ echo ""
 ## If a folder is not created before doing a bind mount in Docker, the folder will be created with root permissions only.
 mkdir -p node-red-status
 
+# Create a default flows.js file if it doesn't exist
+DEFAULT_FLOWS_SOURCE="./config/default_flows.json"
+FLOWS_DESTINATION="./node-red-status/flows.json"
+
+if [ -f "$DEFAULT_FLOWS_SOURCE" ]; then
+    if [ ! -f "$FLOWS_DESTINATION" ]; then
+        echo "Copying default Node-RED flows from '$DEFAULT_FLOWS_SOURCE' to '$FLOWS_DESTINATION'..."
+        cp "$DEFAULT_FLOWS_SOURCE" "$FLOWS_DESTINATION"
+    else
+        echo "Node-RED flows file ($FLOWS_DESTINATION) already exists. Skipping copy of default file."
+    fi
+else
+    echo "Warning: Default Node-RED flows file '$DEFAULT_FLOWS_SOURCE' not found. No default flows will be loaded."
+fi
+
 ## Ask if default user credentials should be used
 echo "_______________________USER CONFIGURATION_______________________"
 read -p "Do you want to use the default user (admin/admin123)? (y/n): " use_default
