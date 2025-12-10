@@ -13,12 +13,17 @@ if [ -t 0 ]; then
         COMPOSE_FILE="docker-compose.dev.yml"
         START_MSG="Starting containers in development mode using ${COMPOSE_FILE}..."
         ACCESS_URL="http://localhost:3000"
+        export NODE_ENV="development"
+        export ALLOWED_ORIGINS="http://localhost:3000,http://localhost:5173"
         break
         ;;
       prod|production)
         COMPOSE_FILE="docker-compose.prod.yml"
         START_MSG="Starting containers in production mode using ${COMPOSE_FILE}..."
         ACCESS_URL="http://localhost:3000"
+        export NODE_ENV="production"
+        ## TODO: Update these origins to match STATUS production domains
+        export ALLOWED_ORIGINS="https://app.status.com,https://www.status.com"
         break
         ;;
       *)
