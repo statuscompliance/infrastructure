@@ -21,7 +21,7 @@ fi
 echo ""
 
 ## Clean up previous installations
-directories=("node-red-status" ".env" "settings.js")
+directories=("node-red-status" ".env")
 
 for dir in "${directories[@]}"; do
     if [ -d "$dir" ]; then
@@ -81,7 +81,7 @@ function setVariables() {
   contents="${contents//\"example_user\"/\"$username\"}"
   contents="${contents//\"example_pass\"/\"$encrypted_password\"}"
 
-  echo "$contents" > settings.js
+  echo "$contents" > node-red-status/settings.js
 
   contents=$(< .env.deploy)
   contents="${contents//example_user/$username}"

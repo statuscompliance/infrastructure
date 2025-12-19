@@ -68,13 +68,13 @@ if (-not (Test-Path "..\node-red-status")) {
     New-Item -ItemType Directory -Path "..\node-red-status" | Out-Null
 }
 
-# Delete settings.js if exists and create new from settings_template.js
-if (Test-Path "..\settings.js") {
-    Write-Host "Deleting settings.js..."
-    Remove-Item -Path "..\settings.js" -Force
+# Create settings.js in node-red-status from settings_template.js
+if (Test-Path "..\node-red-status\settings.js") {
+    Write-Host "Deleting node-red-status/settings.js..."
+    Remove-Item -Path "..\node-red-status\settings.js" -Force
 }
 
-Copy-Item ..\settings_template.js ..\settings.js
+Copy-Item ..\settings_template.js ..\node-red-status\settings.js
 
 # Ask if default user credentials should be used
 Write-Host "_______________________USER CONFIGURATION_______________________"
@@ -104,7 +104,7 @@ $hashedPassword = & docker run --rm $bcryptImage hash "$passwordPlainText" 12
 docker rmi $bcryptImage > $null 2>&1
 
 # Replace example_user and example_pass strings with new user and password in settings.js
-(Get-Content "..\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\settings.js"
+(Get-Content "..\node-red-status\settings.js") -replace 'example_user', $username -replace 'example_pass', $hashedPassword | Set-Content "..\node-red-status\settings.js"
 (Get-Content "..\.env.deploy") -replace 'example_user', $username -replace 'example_pass', $passwordPlainText | Set-Content "..\.env"
 
 Write-Host "Node-RED user created successfully."
